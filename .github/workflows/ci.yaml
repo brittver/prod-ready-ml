@@ -1,0 +1,25 @@
+name: pre-commit
+
+on:
+  pull_request:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        run: pip install uv
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync
+        working-directory: src
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --files $(git ls-files .)
+        working-directory: src
